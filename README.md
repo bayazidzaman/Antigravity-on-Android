@@ -24,8 +24,8 @@
 
 ## Prerequisites
 
-- **Termux** — [Download from F-Droid](https://f-droid.org/en/packages/com.termux/) (recommended over Play Store)
-- **Termux:X11** — [Download from F-Droid](https://f-droid.org/en/packages/com.termux.x11/)
+- **Termux** — [Download from GitHub](https://github.com/termux/termux-app/releases) (recommended over Play Store)
+- **Termux:X11** — [Download from GitHub](https://github.com/termux/termux-x11/releases/tag/nightly)
 - **Magisk** (optional but recommended for root access)
 
 ---
