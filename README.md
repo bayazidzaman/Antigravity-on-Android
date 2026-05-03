@@ -51,6 +51,10 @@ su
 exit
 ```
 
+```bash
+exit
+```
+
 ### 1.4 Grant Storage Permission
 > A popup will appear on your phone — tap **Allow**.
 ```bash
@@ -95,7 +99,7 @@ echo "zaman ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 ### 2.3 Install XFCE4 Desktop (Recommended — Lightweight)
 ```bash
-apt install xfce4 xfce4-terminal dbus-x11 xdg-utils sudo wget curl nano --no-install-recommends -y
+apt install xfce4 xfce4-terminal dbus-x11 xdg-utils sudo wget curl nano xfce4-goodies --no-install-recommends -y
 ```
 
 <details>
