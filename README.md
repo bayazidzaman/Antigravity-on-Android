@@ -49,7 +49,6 @@ pkg install tsu -y
 ```bash
 su
 ```
-
 ```bash
 exit
 ```
@@ -82,23 +81,21 @@ apt update && apt upgrade -y
 
 ### 2.2 Create a User with sudo Access
 > Running apps as root causes errors. Creating a regular user (`zaman`) fixes this.
+> Install sudo
 ```bash
-# Install sudo
 apt install sudo -y
-
-# Create the user
+```
+>Create the user
+```bash
 useradd -m -s /bin/bash zaman
-
-# Set password for zaman (password: 1234)
-echo "zaman:1234" | chpasswd
-
-# Grant passwordless sudo access
+```
+```bash
 echo "zaman ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 ```
 
 ### 2.3 Install XFCE4 Desktop (Recommended — Lightweight)
 ```bash
-apt install xfce4 xfce4-terminal dbus-x11 xdg-utils sudo wget curl nano xfce4-goodies --no-install-recommends -y
+apt install xfce4 xfce4-terminal dbus-x11 xdg-utils fonts-noto-core fonts-beng sudo wget curl nano --no-install-recommends -y
 ```
 
 <details>
