@@ -48,7 +48,6 @@ pkg install tsu -y
 > ⚠️ If you have Magisk installed, a popup will appear — tap **Grant**.
 ```bash
 su
-exit
 ```
 
 ```bash
