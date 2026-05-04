@@ -130,11 +130,8 @@ exit
 
 Then run in Termux:
 ```bash
-cat <<EOF > ~/.bashrc
-alias go='pkill -9 termux-x11; pkill -9 proot; termux-x11 :1 & sleep 3 && proot-distro login ubuntu --shared-tmp -- env DISPLAY=:1 startxfce4'
-alias goz='pkill -9 termux-x11; pkill -9 proot; termux-x11 :1 & sleep 3 && proot-distro login ubuntu --user zaman --bind /sdcard:/sdcard --shared-tmp -- env DISPLAY=:1 startxfce4'
-source ~/.bashrc
-EOF
+echo "alias go='termux-x11 :1 & sleep 2 && proot-distro login ubuntu --shared-tmp -- env DISPLAY=:1 startxfce4'" >> ~/.bashrc
+echo "alias goz='termux-x11 :1 & sleep 2 && proot-distro login ubuntu --user zaman --bind /sdcard:/sdcard --shared-tmp -- env DISPLAY=:1 startxfce4'" >> ~/.bashrc
 source ~/.bashrc
 ```
 
