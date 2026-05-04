@@ -180,8 +180,8 @@ Then open the **Termux:X11** app on your phone — the desktop will appear.
 ### 4.1 Setup Repo
 ```bash
 apt update && apt install curl gnupg -y
-curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg [https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg](https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg)
-echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] [https://brave-browser-apt-release.s3.brave.com/](https://brave-browser-apt-release.s3.brave.com/) stable main" > /etc/apt/sources.list.d/brave-browser-release.list
+curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main" > /etc/apt/sources.list.d/brave-browser-release.list
 ```
 ### 4.2 Install
 ```bash
@@ -191,8 +191,8 @@ apt update && apt install brave-browser -y
 ### 5.1 Setup Repo
 ```bash
 mkdir -p /etc/apt/keyrings
-curl -fsSL [https://us-central1-apt.pkg.dev/doc/repo-signing-key.gpg](https://us-central1-apt.pkg.dev/doc/repo-signing-key.gpg) | gpg --dearmor --yes -o /etc/apt/keyrings/antigravity-repo-key.gpg
-echo "deb [signed-by=/etc/apt/keyrings/antigravity-repo-key.gpg] [https://us-central1-apt.pkg.dev/projects/antigravity-auto-updater-dev/](https://us-central1-apt.pkg.dev/projects/antigravity-auto-updater-dev/) antigravity-debian main" > /etc/apt/sources.list.d/antigravity.list
+curl -fsSL https://us-central1-apt.pkg.dev/doc/repo-signing-key.gpg | gpg --dearmor --yes -o /etc/apt/keyrings/antigravity-repo-key.gpg
+echo "deb [signed-by=/etc/apt/keyrings/antigravity-repo-key.gpg] https://us-central1-apt.pkg.dev/projects/antigravity-auto-updater-dev/ antigravity-debian main" > /etc/apt/sources.list.d/antigravity.list
 ```
 ### 5.2 Install & Fix Ownership
 ```bash
