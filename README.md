@@ -203,7 +203,6 @@ apt update && apt install antigravity -y
 ```
 ### 5.2 Install & Fix Ownership
 ```bash
-apt update && apt install antigravity -y
 chown -R zaman:zaman /usr/share/antigravity 2>/dev/null
 ```
 ## Step 6 — Fix Login & Browser Links (Master Fix)
