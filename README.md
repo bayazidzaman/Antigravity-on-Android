@@ -112,12 +112,12 @@ apt install xfce4 xfce4-terminal dbus-x11 x11-apps xterm xdg-utils wget curl nan
 ```bash
 apt install xfce4 xfce4-goodies xfce4-terminal dbus-x11 x11-apps xterm xdg-utils wget curl nano sudo -y
 ```
-</details>
 
 ### 2.4 Fix Fonts (Bengali & Unicode Support)
 ```bash
 apt install fonts-noto-core fonts-noto-ui-core fonts-noto-cjk fonts-beng -y
 ```
+</details>
 
 > ✅ Ubuntu setup complete. Now **exit back to Termux** to set up launch shortcuts.
 
@@ -151,8 +151,10 @@ From Termux, simply type:
 goz
 ```
 Then open the **Termux:X11** app on your phone — the desktop will appear.
+<details>
+<summary>### 3.2 Manual Launch (Alternative Method) options</summary>
 
-### 3.2 Manual Launch (Alternative Method)
+
 
 **Session 1** — Start the display server:
 ```bash
@@ -166,7 +168,7 @@ dbus-launch startxfce4
 ```
 
 Then open the **Termux:X11** app on your phone — the desktop will appear.
-
+</details>
 ---
 
 ## Step 4 — Install Brave Browser
