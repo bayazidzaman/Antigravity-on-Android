@@ -147,12 +147,17 @@ source ~/.bashrc
 ### 3.1 Launch Using Shortcuts (Recommended)
 
 From Termux, simply type:
+root
+```bash
+go
+```
+user
 ```bash
 goz
 ```
 Then open the **Termux:X11** app on your phone — the desktop will appear.
 <details>
-<summary>### 3.2 Manual Launch (Alternative Method) options</summary>
+<summary>3.2 Manual Launch (Alternative Method) </summary>
 
 
 
