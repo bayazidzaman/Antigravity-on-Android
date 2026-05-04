@@ -76,6 +76,8 @@ proot-distro install ubuntu
 ### 2.1 Log Into Ubuntu & Update
 ```bash
 proot-distro login ubuntu
+```
+```bash
 apt update && apt upgrade -y
 ```
 
