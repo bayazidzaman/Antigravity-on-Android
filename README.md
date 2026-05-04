@@ -191,8 +191,15 @@ apt update && apt install brave-browser -y
 ### 5.1 Setup Repo
 ```bash
 mkdir -p /etc/apt/keyrings
+```
+```bash
 curl -fsSL https://us-central1-apt.pkg.dev/doc/repo-signing-key.gpg | gpg --dearmor --yes -o /etc/apt/keyrings/antigravity-repo-key.gpg
+```
+```bash
 echo "deb [signed-by=/etc/apt/keyrings/antigravity-repo-key.gpg] https://us-central1-apt.pkg.dev/projects/antigravity-auto-updater-dev/ antigravity-debian main" > /etc/apt/sources.list.d/antigravity.list
+```
+```bash
+apt update && apt install antigravity -y
 ```
 ### 5.2 Install & Fix Ownership
 ```bash
