@@ -121,92 +121,45 @@ apt install fonts-noto-core fonts-noto-ui-core fonts-noto-cjk fonts-beng -y
 
 > ✅ Ubuntu setup complete. Now **exit back to Termux** to set up launch shortcuts.
 
-### 2.5 Set Up `go` and `goz` Shortcuts (in Termux)
 
+### 2.5 Set Up Master Shortcut (in Termux)
 Exit Ubuntu first:
 ```bash
 exit
 ```
-
-Then run in Termux:
+Then run in Termux to create a single launch command for the user zaman:
 ```bash
-echo "alias go='termux-x11 :1 & sleep 2 && proot-distro login ubuntu --shared-tmp -- env DISPLAY=:1 startxfce4'" >> ~/.bashrc
-echo "alias goz='termux-x11 :1 & sleep 2 && proot-distro login ubuntu --user zaman --bind /sdcard:/sdcard --shared-tmp -- env DISPLAY=:1 startxfce4'" >> ~/.bashrc
+echo "alias go='termux-x11 :1 & sleep 3 && proot-distro login ubuntu --user zaman --bind /sdcard:/sdcard --shared-tmp -- env DISPLAY=:1 startxfce4'" >> ~/.bashrc
 source ~/.bashrc
+
 ```
-
-| Shortcut | User | Use For |
-|----------|------|---------|
-| `go`     | root | Admin / system tasks |
-| `goz`    | zaman | Coding, browsing, daily use ✅ |
-
----
-
 ## Step 3 — Launch the Desktop
-
-### 3.1 Launch Using Shortcuts (Recommended)
-
-From Termux, simply type:
-> to use root
+To start your workstation, simply type:
 ```bash
 go
 ```
-to use user
-```bash
-goz
-```
-Then open the **Termux:X11** app on your phone — the desktop will appear.
-<details>
-<summary>3.2 Manual Launch (Alternative Method) </summary>
-
-
-
-**Session 1** — Start the display server:
-```bash
-termux-x11 :1 &
-```
-
-**Session 2** — Start the desktop (inside Ubuntu):
-```bash
-export DISPLAY=:1
-dbus-launch startxfce4
-```
-
-Then open the **Termux:X11** app on your phone — the desktop will appear.
-</details>
----
-
+Then open the **Termux:X11** app.
 ## Step 4 — Install Brave Browser
-### 4.1 Setup Repo
+Run these inside the Ubuntu terminal as **root**.
+### 4.1 Setup Repo & Install
 ```bash
 apt update && apt install curl gnupg -y
 curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
 echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main" > /etc/apt/sources.list.d/brave-browser-release.list
-```
-### 4.2 Install
-```bash
 apt update && apt install brave-browser -y
+
 ```
 ## Step 5 — Install Antigravity Editor
-### 5.1 Setup Repo
+### 5.1 Setup Repo & Install
 ```bash
 mkdir -p /etc/apt/keyrings
-```
-```bash
 curl -fsSL https://us-central1-apt.pkg.dev/doc/repo-signing-key.gpg | gpg --dearmor --yes -o /etc/apt/keyrings/antigravity-repo-key.gpg
-```
-```bash
 echo "deb [signed-by=/etc/apt/keyrings/antigravity-repo-key.gpg] https://us-central1-apt.pkg.dev/projects/antigravity-auto-updater-dev/ antigravity-debian main" > /etc/apt/sources.list.d/antigravity.list
-```
-```bash
 apt update && apt install antigravity -y
-```
-### 5.2 Install & Fix Ownership
-```bash
-chown -R zaman:zaman /usr/share/antigravity 2>/dev/null
+
 ```
 ## Step 6 — Fix Login & Browser Links (Master Fix)
-> **Important:** Run this as **Root** to force Brave to be the default for all login buttons (GitHub/Google) and terminal links.
+> 💡 Run this as **Root** to ensure icons and links work perfectly for the zaman user.
 > 
 ### 6.1 Create bb-link Wrapper
 ```bash
@@ -215,6 +168,7 @@ cat <<'EOF' > /usr/bin/bb-link
 exec brave-browser --no-sandbox --disable-gpu "$@"
 EOF
 chmod +x /usr/bin/bb-link
+
 ```
 ### 6.2 Set System Defaults
 ```bash
@@ -224,13 +178,15 @@ update-alternatives --install /usr/bin/gnome-www-browser gnome-www-browser /usr/
 update-alternatives --set gnome-www-browser /usr/bin/bb-link
 
 echo "export BROWSER=bb-link" >> /etc/environment
+
 ```
-### 6.3 Patch Desktop Icons (Fix "App not opening")
+### 6.3 Patch Desktop Icons
 ```bash
 sed -i 's|Exec=brave-browser|Exec=brave-browser --no-sandbox --disable-gpu|g' /usr/share/applications/brave-browser.desktop
 sed -i 's|Exec=antigravity|Exec=antigravity --no-sandbox --disable-gpu|g' /usr/share/applications/antigravity.desktop
+
 ```
----
+
 
 ## Step 7 — Access Phone Storage
 
