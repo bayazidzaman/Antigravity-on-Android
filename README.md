@@ -147,11 +147,11 @@ source ~/.bashrc
 ### 3.1 Launch Using Shortcuts (Recommended)
 
 From Termux, simply type:
-root
+> to use root
 ```bash
 go
 ```
-user
+to use user
 ```bash
 goz
 ```
