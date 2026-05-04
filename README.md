@@ -170,175 +170,60 @@ Then open the **Termux:X11** app on your phone — the desktop will appear.
 ---
 
 ## Step 4 — Install Brave Browser
-
-Run these inside the Ubuntu terminal as **root**.
-
-### 4.1 Add Repository & Key
+### 4.1 Setup Repo
 ```bash
 apt update && apt install curl gnupg -y
+curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg [https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg](https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg)
+echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] [https://brave-browser-apt-release.s3.brave.com/](https://brave-browser-apt-release.s3.brave.com/) stable main" > /etc/apt/sources.list.d/brave-browser-release.list
 
-curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg \
-  https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
-
-echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] \
-  https://brave-browser-apt-release.s3.brave.com/ stable main" \
-  > /etc/apt/sources.list.d/brave-browser-release.list
 ```
-
 ### 4.2 Install
 ```bash
 apt update && apt install brave-browser -y
+
 ```
-
-### 4.3 Create Desktop Shortcut
-```bash
-cat <<EOF > /home/zaman/Desktop/Brave.desktop
-[Desktop Entry]
-Version=1.0
-Type=Application
-Name=Brave Browser
-Comment=Fast and Secure Browser
-Exec=su - zaman -c "export DISPLAY=:1; brave-browser --no-sandbox --disable-gpu"
-Icon=brave-browser
-Terminal=false
-Categories=Network;WebBrowser;
-EOF
-
-chown zaman:zaman /home/zaman/Desktop/Brave.desktop
-chmod +x /home/zaman/Desktop/Brave.desktop
-```
-
-> 💡 To test Brave from terminal before using the shortcut:
-> ```bash
-> su - zaman -c "export DISPLAY=:1; brave-browser --no-sandbox --disable-gpu"
-> ```
-
----
-
 ## Step 5 — Install Antigravity Editor
-
-### 5.1 Add Repository Key
+### 5.1 Setup Repo
 ```bash
-apt update && apt install curl gnupg -y
-
 mkdir -p /etc/apt/keyrings
-curl -fsSL https://us-central1-apt.pkg.dev/doc/repo-signing-key.gpg | \
-  gpg --dearmor --yes -o /etc/apt/keyrings/antigravity-repo-key.gpg
-```
+curl -fsSL [https://us-central1-apt.pkg.dev/doc/repo-signing-key.gpg](https://us-central1-apt.pkg.dev/doc/repo-signing-key.gpg) | gpg --dearmor --yes -o /etc/apt/keyrings/antigravity-repo-key.gpg
+echo "deb [signed-by=/etc/apt/keyrings/antigravity-repo-key.gpg] [https://us-central1-apt.pkg.dev/projects/antigravity-auto-updater-dev/](https://us-central1-apt.pkg.dev/projects/antigravity-auto-updater-dev/) antigravity-debian main" > /etc/apt/sources.list.d/antigravity.list
 
-### 5.2 Add Repository
+```
+### 5.2 Install & Fix Ownership
 ```bash
-echo "deb [signed-by=/etc/apt/keyrings/antigravity-repo-key.gpg] \
-  https://us-central1-apt.pkg.dev/projects/antigravity-auto-updater-dev/ \
-  antigravity-debian main" > /etc/apt/sources.list.d/antigravity.list
+apt update && apt install antigravity -y
+chown -R zaman:zaman /usr/share/antigravity 2>/dev/null
+
 ```
-
-### 5.3 Install
-```bash
-apt update
-apt install antigravity -y
-```
-
-### 5.4 Create Desktop Shortcut
-```bash
-cat <<EOF > /home/zaman/Desktop/Antigravity.desktop
-[Desktop Entry]
-Version=1.0
-Type=Application
-Name=Antigravity
-Comment=Expert Coding Editor
-Exec=su - zaman -c "export DISPLAY=:1; antigravity --no-sandbox --disable-gpu"
-Icon=antigravity
-Terminal=false
-Categories=Development;IDE;
-EOF
-
-chown zaman:zaman /home/zaman/Desktop/Antigravity.desktop
-chmod +x /home/zaman/Desktop/Antigravity.desktop
-```
-
-> 💡 To test Antigravity from terminal before using the shortcut:
-> ```bash
-> su - zaman -c "export DISPLAY=:1; antigravity --no-sandbox --disable-gpu"
-> ```
-
----
-
-## Step 6 — Fix Login & Browser Links
-
-> In PRoot Linux, browsers cannot open unless `--no-sandbox` is passed. This fix makes Antigravity's login buttons (GitHub, Google) open correctly in Brave.
-
-### 6.1 Create the `bb-link` Wrapper (Run as root)
-
-First, create a small wrapper script that launches Brave with the correct flags when any app tries to open a link:
-
+## Step 6 — Fix Login & Browser Links (Master Fix)
+> **Important:** Run this as **Root** to force Brave to be the default for all login buttons (GitHub/Google) and terminal links.
+> 
+### 6.1 Create bb-link Wrapper
 ```bash
 cat <<'EOF' > /usr/bin/bb-link
 #!/bin/bash
 exec brave-browser --no-sandbox --disable-gpu "$@"
 EOF
 chmod +x /usr/bin/bb-link
+
 ```
-
-### 6.2 Set System-Wide Default Browser Alternatives
-
+### 6.2 Set System Defaults
 ```bash
-# Point x-www-browser to our wrapper
 update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/bb-link 200
 update-alternatives --set x-www-browser /usr/bin/bb-link
-
-# Point gnome-www-browser to our wrapper
 update-alternatives --install /usr/bin/gnome-www-browser gnome-www-browser /usr/bin/bb-link 200
 update-alternatives --set gnome-www-browser /usr/bin/bb-link
-```
 
-### 6.3 Set BROWSER Environment Variable
-
-```bash
-# System-wide
 echo "export BROWSER=bb-link" >> /etc/environment
-echo "export BROWSER=bb-link" >> /root/.bashrc
 
-# For zaman user
-echo "export BROWSER=bb-link" >> /home/zaman/.bashrc
 ```
-
-### 6.4 Set XDG & XFCE Default Browser
-
-> ⚠️ Run this as the **zaman** user, not root. Switch first:
-> ```bash
-> su - zaman
-> ```
-
+### 6.3 Patch Desktop Icons (Fix "App not opening")
 ```bash
-# XDG mime defaults (for desktop link handling)
-xdg-settings set default-web-browser brave-browser.desktop 2>/dev/null
-xdg-mime default brave-browser.desktop x-scheme-handler/http 2>/dev/null
-xdg-mime default brave-browser.desktop x-scheme-handler/https 2>/dev/null
+sed -i 's|Exec=brave-browser|Exec=brave-browser --no-sandbox --disable-gpu|g' /usr/share/applications/brave-browser.desktop
+sed -i 's|Exec=antigravity|Exec=antigravity --no-sandbox --disable-gpu|g' /usr/share/applications/antigravity.desktop
 
-# XFCE preferred applications
-exo-preferred-applications --set WebBrowser brave-browser.desktop 2>/dev/null
-
-# Set BROWSER variable
-echo "export BROWSER=bb-link" >> ~/.bashrc
-source ~/.bashrc
 ```
-
-Then go back to root:
-```bash
-exit
-```
-
-### 6.5 Patch Brave's Desktop File (Run as root)
-
-```bash
-# Patch Brave's .desktop file to include --no-sandbox
-sed -i 's|Exec=/usr/bin/brave-browser-stable|Exec=/usr/bin/brave-browser-stable --no-sandbox --disable-gpu|g' \
-  /usr/share/applications/brave-browser.desktop
-```
-
-> ✅ After this, clicking any login button (GitHub, Google) inside Antigravity will open Brave automatically.
-
 ---
 
 ## Step 7 — Access Phone Storage
