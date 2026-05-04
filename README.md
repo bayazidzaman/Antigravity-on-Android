@@ -182,12 +182,10 @@ Then open the **Termux:X11** app on your phone — the desktop will appear.
 apt update && apt install curl gnupg -y
 curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg [https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg](https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg)
 echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] [https://brave-browser-apt-release.s3.brave.com/](https://brave-browser-apt-release.s3.brave.com/) stable main" > /etc/apt/sources.list.d/brave-browser-release.list
-
 ```
 ### 4.2 Install
 ```bash
 apt update && apt install brave-browser -y
-
 ```
 ## Step 5 — Install Antigravity Editor
 ### 5.1 Setup Repo
@@ -195,13 +193,11 @@ apt update && apt install brave-browser -y
 mkdir -p /etc/apt/keyrings
 curl -fsSL [https://us-central1-apt.pkg.dev/doc/repo-signing-key.gpg](https://us-central1-apt.pkg.dev/doc/repo-signing-key.gpg) | gpg --dearmor --yes -o /etc/apt/keyrings/antigravity-repo-key.gpg
 echo "deb [signed-by=/etc/apt/keyrings/antigravity-repo-key.gpg] [https://us-central1-apt.pkg.dev/projects/antigravity-auto-updater-dev/](https://us-central1-apt.pkg.dev/projects/antigravity-auto-updater-dev/) antigravity-debian main" > /etc/apt/sources.list.d/antigravity.list
-
 ```
 ### 5.2 Install & Fix Ownership
 ```bash
 apt update && apt install antigravity -y
 chown -R zaman:zaman /usr/share/antigravity 2>/dev/null
-
 ```
 ## Step 6 — Fix Login & Browser Links (Master Fix)
 > **Important:** Run this as **Root** to force Brave to be the default for all login buttons (GitHub/Google) and terminal links.
@@ -213,7 +209,6 @@ cat <<'EOF' > /usr/bin/bb-link
 exec brave-browser --no-sandbox --disable-gpu "$@"
 EOF
 chmod +x /usr/bin/bb-link
-
 ```
 ### 6.2 Set System Defaults
 ```bash
@@ -223,13 +218,11 @@ update-alternatives --install /usr/bin/gnome-www-browser gnome-www-browser /usr/
 update-alternatives --set gnome-www-browser /usr/bin/bb-link
 
 echo "export BROWSER=bb-link" >> /etc/environment
-
 ```
 ### 6.3 Patch Desktop Icons (Fix "App not opening")
 ```bash
 sed -i 's|Exec=brave-browser|Exec=brave-browser --no-sandbox --disable-gpu|g' /usr/share/applications/brave-browser.desktop
 sed -i 's|Exec=antigravity|Exec=antigravity --no-sandbox --disable-gpu|g' /usr/share/applications/antigravity.desktop
-
 ```
 ---
 
