@@ -61,198 +61,133 @@ termux-setup-storage
 
 ### 1.5 Install Graphics Repositories & Core Tools
 ```bash
-pkg install x11-repo -y && pkg install proot-distro termux-x11-nightly termux-api -y
+pkg install x11-repo -y
+```
+```bash
+pkg update
+```
+```bash
+pkg install tsu proot-distro termux-x11 termux-api -y
 ```
 
-### 1.6 Install Ubuntu
+### 1.6 Install Debian
 ```bash
-proot-distro install ubuntu
+proot-distro install debian
 ```
-
----
-
-## Step 2 — Ubuntu Desktop Environment
-
-### 2.1 Log Into Ubuntu & Update
 ```bash
-proot-distro login ubuntu
+proot-distro login debian
 ```
 ```bash
 apt update && apt upgrade -y
 ```
 
-### 2.2 Create a User with sudo Access
-> Running apps as root causes errors. Creating a regular user (`zaman`) fixes this.
-> Install sudo
-```bash
-apt install sudo -y
-```
->Create the user
-```bash
-useradd -m -s /bin/bash zaman
-```
-```bash
-echo "zaman ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-```
+---
 
-### 2.3 Install XFCE4 Desktop (Recommended — Lightweight)
+## Step 2 — Debian Desktop
 ```bash
-apt install xfce4 xfce4-terminal dbus-x11 xdg-utils fonts-noto-core fonts-beng sudo wget curl nano --no-install-recommends -y
+apt install xfce4 xfce4-goodies xfce4-terminal dbus-x11 xdg-utils x11-apps sudo wget curl nano -y
 ```
-
 <details>
-<summary>Alternative (heavier) installation options</summary>
-
-**Medium:**
-```bash
-apt install xfce4 xfce4-terminal dbus-x11 x11-apps xterm xdg-utils wget curl nano sudo -y
-```
-
-**Full (not recommended — very heavy):**
-```bash
-apt install xfce4 xfce4-goodies xfce4-terminal dbus-x11 x11-apps xterm xdg-utils wget curl nano sudo -y
-```
-
-### 2.4 Fix Fonts (Bengali & Unicode Support)
+ ### 2.4 Fix Fonts (Bengali & Unicode Support)
 ```bash
 apt install fonts-noto-core fonts-noto-ui-core fonts-noto-cjk fonts-beng -y
 ```
 </details>
+```bash
+exit
+```
+
+### 🚀 Phase 2.3: Create the "Master Go" Shortcut
+ডেবিয়ান থেকে বের হয়ে টার্মাক্সে এই শর্টকাটটি সেট করুন (যা সেশন লক ফাইল অটো ডিলিট করবে):
+```bash
+echo "alias go='rm -rf /tmp/.X11-unix/X1 /tmp/.X1-lock 2>/dev/null; termux-x11 :1 & sleep 3 && proot-distro login debian --shared-tmp -- env DISPLAY=:1 startxfce4'" >> ~/.bashrc
+source ~/.bashrc
+```
+
+```bash
+go
+```
 
 > ✅ Ubuntu setup complete. Now **exit back to Termux** to set up launch shortcuts.
 
 
-### 2.5 Set Up Master Shortcut (in Termux)
-Exit Ubuntu first:
-```bash
-exit
-```
-Then run in Termux to create a single launch command for the user zaman:
-```bash
-echo "alias go='termux-x11 :1 & sleep 3 && proot-distro login ubuntu --user zaman --bind /sdcard:/sdcard --shared-tmp -- env DISPLAY=:1 startxfce4'" >> ~/.bashrc
-source ~/.bashrc
+Firefox Installation (Step-by-Step)
 
-```
-## Step 3 — Launch the Desktop
-To start your workstation, simply type:
 ```bash
-go
+apt update && apt install firefox-esr -y
 ```
-Then open the **Termux:X11** app.
-## Step 4 — Install Brave Browser
-Run these inside the Ubuntu terminal as **root**.
-### 4.1 Setup Repo & Install
 ```bash
-apt update && apt install curl gnupg -y
-curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
-echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main" > /etc/apt/sources.list.d/brave-browser-release.list
-apt update && apt install brave-browser -y
+sed -i 's|^Exec=.*|Exec=firefox-esr --no-sandbox %u|g' /usr/share/applications/firefox-esr.desktop
+```
+```bash
+chmod +x /usr/share/applications/firefox-esr.desktop
+```
 
-```
-## Step 5 — Install Antigravity Editor
-### 5.1 Setup Repo & Install
+
+Install Antigravity Editor
 ```bash
 mkdir -p /etc/apt/keyrings
 curl -fsSL https://us-central1-apt.pkg.dev/doc/repo-signing-key.gpg | gpg --dearmor --yes -o /etc/apt/keyrings/antigravity-repo-key.gpg
 echo "deb [signed-by=/etc/apt/keyrings/antigravity-repo-key.gpg] https://us-central1-apt.pkg.dev/projects/antigravity-auto-updater-dev/ antigravity-debian main" > /etc/apt/sources.list.d/antigravity.list
 apt update && apt install antigravity -y
-
 ```
-## Step 6 — Fix Login & Browser Links (Master Fix)
-> 💡 Run this as **Root** to ensure icons and links work perfectly for the zaman user.
-> 
-### 6.1 Create bb-link Wrapper
+after install do this 
+# 1. Update the icon file with sandbox fix and data directory
 ```bash
-cat <<'EOF' > /usr/bin/bb-link
-#!/bin/bash
-exec brave-browser --no-sandbox --disable-gpu "$@"
-EOF
-chmod +x /usr/bin/bb-link
-
+sed -i 's|^Exec=.*|Exec=antigravity --no-sandbox --disable-gpu --user-data-dir=/root/.config/antigravity %U|g' /usr/share/applications/antigravity.desktop
 ```
-### 6.2 Set System Defaults
 ```bash
-update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/bb-link 200
-update-alternatives --set x-www-browser /usr/bin/bb-link
-update-alternatives --install /usr/bin/gnome-www-browser gnome-www-browser /usr/bin/bb-link 200
-update-alternatives --set gnome-www-browser /usr/bin/bb-link
-
-echo "export BROWSER=bb-link" >> /etc/environment
-
-```
-### 6.3 Patch Desktop Icons
-```bash
-sed -i 's|Exec=brave-browser|Exec=brave-browser --no-sandbox --disable-gpu|g' /usr/share/applications/brave-browser.desktop
-sed -i 's|Exec=antigravity|Exec=antigravity --no-sandbox --disable-gpu|g' /usr/share/applications/antigravity.desktop
-
+chmod +x /usr/share/applications/antigravity.desktop
 ```
 
 
-## Step 7 — Access Phone Storage
-
-### 7.1 Link Phone Storage into Linux
-Run inside Ubuntu (as root or zaman):
+ইউজার তৈরি এবং পারমিশন (Inside Debian - Root হিসেবে দিন)
+# ১. জামান ইউজার তৈরি করা
 ```bash
-ln -s /sdcard ~/phone_storage
+useradd -m -s /bin/bash zaman
+```
+# ২. সুডো (Sudo) পারমিশন দেওয়া
+```bash
+echo "zaman ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 ```
 
-### 7.2 Storage Access for zaman
-
-No extra permission command is needed. The `goz` shortcut already includes `--bind /sdcard:/sdcard`, which automatically mounts your phone storage inside Linux for the zaman user.
-
-> ℹ️ **Note:** Running `chown -R zaman:zaman /sdcard` will fail with "Operation not permitted" — this is normal. Android's `/sdcard` is a FUSE mount point and its ownership cannot be changed from inside Linux, even on rooted phones.
-
-### 7.3 Open Files in Antigravity
-1. Open Antigravity → click **"Open Folder"**
-2. Enter the path: `/sdcard` or `/home/zaman/phone_storage`
-3. Your phone's files will appear in the editor's file explorer.
-
-> 💡 **Pro Tip:** Keep your projects in `/sdcard/projects/` so they're visible from your phone's file manager too — and never accidentally deleted when resetting PRoot.
-
----
-
-## Shortcuts Reference
-
-> If you always use `goz` to launch the desktop, you are already logged in as **zaman** — use the zaman shortcuts below. Root shortcuts are only needed if you launch with `go`.
-
-### Zaman User Shortcuts (recommended — run in XFCE terminal as zaman)
-
+# অ্যান্টিগ্রাভিটি আইকন আপডেট (Root থেকে /home/zaman এ পরিবর্তন)
 ```bash
-echo "alias ag='antigravity --no-sandbox --disable-gpu --user-data-dir=/home/zaman/.antigravity-data'" >> ~/.bashrc
-echo "alias bb='brave-browser --no-sandbox --disable-gpu'" >> ~/.bashrc
-echo "export DISPLAY=:1" >> ~/.bashrc
-source ~/.bashrc
+sed -i 's|--user-data-dir=/root/.config/antigravity|--user-data-dir=/home/zaman/.config/antigravity|g' /usr/share/applications/antigravity.desktop
 ```
 
-### Root User Shortcuts (only if you use `go` to launch)
-
+# --- ১. জামান ইউজারের জন্য (Setup for zaman) ---
 ```bash
-echo "alias bb='su - zaman -c \"export DISPLAY=:1; brave-browser --no-sandbox --disable-gpu\"'" >> /root/.bashrc
-echo "alias ag='su - zaman -c \"export DISPLAY=:1; antigravity --no-sandbox --disable-gpu\"'" >> /root/.bashrc
+echo "alias ag='antigravity --no-sandbox --disable-gpu --user-data-dir=/home/zaman/.config/antigravity'" >> /home/zaman/.bashrc
+echo "alias bb='brave-browser --no-sandbox --disable-gpu'" >> /home/zaman/.bashrc
+echo "export DISPLAY=:1" >> /home/zaman/.bashrc
+ln -sf /sdcard /home/zaman/phone_storage
+chown -R zaman:zaman /home/zaman/
+```
+
+# --- ২. রুট ইউজারের জন্য (Setup for root) ---
+```bash
+echo "alias ag='antigravity --no-sandbox --disable-gpu --user-data-dir=/root/.config/antigravity'" >> /root/.bashrc
+echo "alias bb='brave-browser --no-sandbox --disable-gpu'" >> /root/.bashrc
+echo "export DISPLAY=:1" >> /root/.bashrc
+ln -sf /sdcard /root/phone_storage
+```
+
+# --- ৩. সেটিংস সাথে সাথে কার্যকর করা (Activation) ---
+```bash
 source /root/.bashrc
 ```
 
-### All Shortcuts Summary
+"goz" Shortcut for zaman user (Termux-এ দিন)
+```bash
+echo "alias goz='rm -rf /tmp/.X11-unix/X1 /tmp/.X1-lock 2>/dev/null; termux-x11 :1 & sleep 3 && proot-distro login debian --user zaman --bind /sdcard:/sdcard --shared-tmp -- env DISPLAY=:1 startxfce4'" >> ~/.bashrc
+```
+```bash
+source ~/.bashrc
+```
 
-| Command | Where to Run | Action |
-|---------|-------------|--------|
-| `go`    | Termux      | Launch desktop as root |
-| `goz`   | Termux      | Launch desktop as zaman (recommended) |
-| `bb`    | Ubuntu terminal | Open Brave Browser |
-| `ag`    | Ubuntu terminal | Open Antigravity Editor |
+Target Device: Rooted/Non-Rooted Android (Test on Redmi Note 12)
 
----
 
-## Why `--no-sandbox --disable-gpu`?
 
-PRoot is not a full virtual machine — it doesn't have kernel-level isolation. Chromium-based apps (Brave, Antigravity) require sandbox mode by default, which doesn't work in PRoot. Passing `--no-sandbox --disable-gpu` tells these apps to skip that requirement and run normally.
 
----
-
-## Contributing
-
-Feel free to open an issue or PR if something doesn't work on your device. Tested on Android 11+ with Termux from F-Droid.
-
----
-
-*Built with ❤️ on a phone.*
