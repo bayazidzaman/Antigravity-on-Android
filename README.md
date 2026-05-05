@@ -239,7 +239,7 @@ su - zaman
 ```
 to back
 ```bash
-exir
+exit
 ```
 zaman to root in terminal
 ```bash
