@@ -233,4 +233,21 @@ goz
 
 ---
 
+Root to zaman in terminal
+```bash
+su - zaman
+```
+to back
+```bash
+exir
+```
+zaman to root in terminal
+```bash
+sudo -i
+```
+to back
+```bash
+exit
+```
+
 > **Target Device:** Rooted/Non-Rooted Android (Tested on Redmi Note 12)
