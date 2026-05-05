@@ -2,7 +2,7 @@
 > Run Antigravity (coding editor) and a full Linux desktop environment on Android using Termux, PRoot, and XFCE4 — completely free.
 
 ![Platform](https://img.shields.io/badge/Platform-Android-green?style=flat-square&logo=android)
-![Distro](https://img.shields.io/badge/Distro-Ubuntu-orange?style=flat-square&logo=ubuntu)
+![Distro](https://img.shields.io/badge/Distro-Debian-red?style=flat-square&logo=debian)
 ![Desktop](https://img.shields.io/badge/Desktop-XFCE4-blue?style=flat-square)
 ![Status](https://img.shields.io/badge/Status-Working-brightgreen?style=flat-square)
 
@@ -12,11 +12,11 @@
 
 - [Prerequisites](#prerequisites)
 - [Step 1 — Termux Base Setup](#step-1--termux-base-setup)
-- [Step 2 — Ubuntu Desktop Environment](#step-2--ubuntu-desktop-environment)
+- [Step 2 — Debian Desktop Environment](#step-2--debian-desktop-environment)
 - [Step 3 — Launch the Desktop](#step-3--launch-the-desktop)
-- [Step 4 — Install Brave Browser](#step-4--install-brave-browser)
+- [Step 4 — Install Firefox Browser](#step-4--install-firefox-browser)
 - [Step 5 — Install Antigravity Editor](#step-5--install-antigravity-editor)
-- [Step 6 — Fix Login & Browser Links](#step-6--fix-login--browser-links)
+- [Step 6 — User Setup & Permissions](#step-6--user-setup--permissions)
 - [Step 7 — Access Phone Storage](#step-7--access-phone-storage)
 - [Shortcuts Reference](#shortcuts-reference)
 
@@ -83,39 +83,56 @@ apt update && apt upgrade -y
 
 ---
 
-## Step 2 — Debian Desktop
+## Step 2 — Debian Desktop Environment
+
+### 2.1 Install XFCE4 Desktop & Core Tools
 ```bash
 apt install xfce4 xfce4-goodies xfce4-terminal dbus-x11 xdg-utils x11-apps sudo wget curl nano -y
 ```
-<details>
- ### 2.4 Fix Fonts (Bengali & Unicode Support)
+
+### 2.2 Fix Fonts (Bengali & Unicode Support)
 ```bash
 apt install fonts-noto-core fonts-noto-ui-core fonts-noto-cjk fonts-beng -y
 ```
-</details>
+
+### 2.3 Exit Back to Termux
 ```bash
 exit
 ```
 
-### 🚀 Phase 2.3: Create the "Master Go" Shortcut
-ডেবিয়ান থেকে বের হয়ে টার্মাক্সে এই শর্টকাটটি সেট করুন (যা সেশন লক ফাইল অটো ডিলিট করবে):
+---
+
+## Step 3 — Launch the Desktop
+
+### 3.1 Create the "go" Launch Shortcut
+Run this in Termux to set up a shortcut that auto-deletes session lock files on launch:
 ```bash
 echo "alias go='rm -rf /tmp/.X11-unix/X1 /tmp/.X1-lock 2>/dev/null; termux-x11 :1 & sleep 3 && proot-distro login debian --shared-tmp -- env DISPLAY=:1 startxfce4'" >> ~/.bashrc
 source ~/.bashrc
 ```
 
+### 3.2 Launch the Desktop
 ```bash
 go
 ```
 
-> ✅ Ubuntu setup complete. Now **exit back to Termux** to set up launch shortcuts.
+> ✅ Debian setup complete. The XFCE4 desktop should now open in Termux:X11.
 
+---
 
-Firefox Installation (Step-by-Step)
+## Step 4 — Install Firefox Browser
 
+Log back into Debian first:
+```bash
+proot-distro login debian
+```
+
+### 4.1 Install Firefox ESR
 ```bash
 apt update && apt install firefox-esr -y
 ```
+
+### 4.2 Fix Sandbox for Proot
 ```bash
 sed -i 's|^Exec=.*|Exec=firefox-esr --no-sandbox %u|g' /usr/share/applications/firefox-esr.desktop
 ```
@@ -123,16 +140,19 @@ sed -i 's|^Exec=.*|Exec=firefox-esr --no-sandbox %u|g' /usr/share/applications/f
 chmod +x /usr/share/applications/firefox-esr.desktop
 ```
 
+---
 
-Install Antigravity Editor
+## Step 5 — Install Antigravity Editor
+
+### 5.1 Add Repository & Install
 ```bash
 mkdir -p /etc/apt/keyrings
 curl -fsSL https://us-central1-apt.pkg.dev/doc/repo-signing-key.gpg | gpg --dearmor --yes -o /etc/apt/keyrings/antigravity-repo-key.gpg
 echo "deb [signed-by=/etc/apt/keyrings/antigravity-repo-key.gpg] https://us-central1-apt.pkg.dev/projects/antigravity-auto-updater-dev/ antigravity-debian main" > /etc/apt/sources.list.d/antigravity.list
 apt update && apt install antigravity -y
 ```
-after install do this 
-# 1. Update the icon file with sandbox fix and data directory
+
+### 5.2 Fix Desktop Icon (Sandbox & Data Directory)
 ```bash
 sed -i 's|^Exec=.*|Exec=antigravity --no-sandbox --disable-gpu --user-data-dir=/root/.config/antigravity %U|g' /usr/share/applications/antigravity.desktop
 ```
@@ -140,45 +160,52 @@ sed -i 's|^Exec=.*|Exec=antigravity --no-sandbox --disable-gpu --user-data-dir=/
 chmod +x /usr/share/applications/antigravity.desktop
 ```
 
+---
 
-ইউজার তৈরি এবং পারমিশন (Inside Debian - Root হিসেবে দিন)
-# ১. জামান ইউজার তৈরি করা
+## Step 6 — User Setup & Permissions
+
+### 6.1 Create User
 ```bash
 useradd -m -s /bin/bash zaman
 ```
-# ২. সুডো (Sudo) পারমিশন দেওয়া
+
+### 6.2 Grant Sudo Permission
 ```bash
 echo "zaman ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 ```
 
-# অ্যান্টিগ্রাভিটি আইকন আপডেট (Root থেকে /home/zaman এ পরিবর্তন)
+### 6.3 Update Antigravity Icon for zaman User
 ```bash
 sed -i 's|--user-data-dir=/root/.config/antigravity|--user-data-dir=/home/zaman/.config/antigravity|g' /usr/share/applications/antigravity.desktop
 ```
 
-# --- ১. জামান ইউজারের জন্য (Setup for zaman) ---
+### 6.4 Setup Aliases & Environment for zaman
 ```bash
 echo "alias ag='antigravity --no-sandbox --disable-gpu --user-data-dir=/home/zaman/.config/antigravity'" >> /home/zaman/.bashrc
-echo "alias bb='brave-browser --no-sandbox --disable-gpu'" >> /home/zaman/.bashrc
+echo "alias bb='firefox-esr --no-sandbox --disable-gpu'" >> /home/zaman/.bashrc
 echo "export DISPLAY=:1" >> /home/zaman/.bashrc
 ln -sf /sdcard /home/zaman/phone_storage
 chown -R zaman:zaman /home/zaman/
 ```
 
-# --- ২. রুট ইউজারের জন্য (Setup for root) ---
+### 6.5 Setup Aliases & Environment for Root
 ```bash
 echo "alias ag='antigravity --no-sandbox --disable-gpu --user-data-dir=/root/.config/antigravity'" >> /root/.bashrc
-echo "alias bb='brave-browser --no-sandbox --disable-gpu'" >> /root/.bashrc
+echo "alias bb='firefox-esr --no-sandbox --disable-gpu'" >> /root/.bashrc
 echo "export DISPLAY=:1" >> /root/.bashrc
 ln -sf /sdcard /root/phone_storage
 ```
 
-# --- ৩. সেটিংস সাথে সাথে কার্যকর করা (Activation) ---
+### 6.6 Activate Settings
 ```bash
 source /root/.bashrc
 ```
 
-"goz" Shortcut for zaman user (Termux-এ দিন)
+---
+
+## Step 7 — Access Phone Storage
+
+### 7.1 Create "goz" Shortcut for zaman User (Run in Termux)
 ```bash
 echo "alias goz='rm -rf /tmp/.X11-unix/X1 /tmp/.X1-lock 2>/dev/null; termux-x11 :1 & sleep 3 && proot-distro login debian --user zaman --bind /sdcard:/sdcard --shared-tmp -- env DISPLAY=:1 startxfce4'" >> ~/.bashrc
 ```
@@ -186,8 +213,24 @@ echo "alias goz='rm -rf /tmp/.X11-unix/X1 /tmp/.X1-lock 2>/dev/null; termux-x11 
 source ~/.bashrc
 ```
 
-Target Device: Rooted/Non-Rooted Android (Test on Redmi Note 12)
+### 7.2 Launch as zaman User
+```bash
+goz
+```
 
+> ✅ Phone storage is accessible at `~/phone_storage` inside the Debian environment.
 
+---
 
+## Shortcuts Reference
 
+| Shortcut | User | Description |
+|----------|------|-------------|
+| `go` | root | Launch Debian desktop as root |
+| `goz` | zaman | Launch Debian desktop as zaman with phone storage |
+| `ag` | both | Launch Antigravity editor |
+| `bb` | both | Launch Firefox browser |
+
+---
+
+> **Target Device:** Rooted/Non-Rooted Android (Tested on Redmi Note 12)
